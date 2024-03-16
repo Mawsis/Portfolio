@@ -20,8 +20,7 @@ export const HeroParallax = ({
   }[];
 }) => {
   const firstRow = projects.slice(0, 2);
-  const secondRow = projects.slice(2, 4);
-  const thirdRow = projects.slice(10, 15);
+  const secondRow = projects.slice(2, 5);
   const ref = React.useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -31,13 +30,14 @@ export const HeroParallax = ({
   const springConfig = { stiffness: 300, damping: 30, bounce: 100 };
 
   const translateX = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, -1000]),
+    useTransform(scrollYProgress, [0, 1], [100, -100]),
     springConfig
   );
   const translateXReverse = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, 1000]),
+    useTransform(scrollYProgress, [0, 1], [-100, 100]),
     springConfig
   );
+
   const rotateX = useSpring(
     useTransform(scrollYProgress, [0, 0.2], [15, 0]),
     springConfig
@@ -51,13 +51,14 @@ export const HeroParallax = ({
     springConfig
   );
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [-700, 400]),
+    useTransform(scrollYProgress, [0, 0.2], [-700, 200]),
     springConfig
   );
   return (
     <div
       ref={ref}
-      className="h-[260vh] mt-24 py-40 overflow-hidden  antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]">
+      className="h-auto lg:h-[260vh] lg:my-20 lg:pt-40 antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
+    >
       <Header />
       <motion.div
         style={{
@@ -66,7 +67,8 @@ export const HeroParallax = ({
           translateY,
           opacity,
         }}
-        className="">
+        className="hidden lg:block"
+      >
         <motion.div className="flex flex-row-reverse space-x-reverse space-x-20 mb-20">
           {firstRow.map((product) => (
             <ProductCard
@@ -85,29 +87,42 @@ export const HeroParallax = ({
             />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row-reverse space-x-reverse space-x-20">
-          {thirdRow.map((product) => (
-            <ProductCard
-              product={product}
-              translate={translateX}
-              key={product.title}
-            />
-          ))}
-        </motion.div>
       </motion.div>
+      <div className="lg:hidden flex flex-col items-center gap-5 justify-center px-3">
+        {projects.map((product) => (
+          <div
+            key={product.title}
+            className="group/product flex flex-col items-center gap-2 justify-center"
+          >
+            <h2 className="text-white text-lg">
+              {product.title}
+            </h2>
+            <Link
+              href={product.link}
+              className="block group-hover/product:shadow-2xl rounded-xl overflow-hidden"
+            >
+              <Image
+                src={product.thumbnail}
+                className="object-fit h-full w-full inset-0"
+                alt={product.title}
+              />
+            </Link>
+
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
 export const Header = () => {
   return (
-    <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full  left-0 top-0">
-      <h1 className="text-2xl md:text-7xl font-bold text-white">
+    <div className="max-w-7xl relative mx-auto py-20 md:py-40 text-center lg:text-start lg:px-4 w-full  left-0 top-0">
+      <h1 className="text-3xl md:text-7xl font-bold text-white">
         I've made <br /> Some cool projects
       </h1>
       <p className="max-w-2xl text-base md:text-xl mt-8 text-neutral-200">
-        With React, Next.js, TailwindCSS and more. The backend ranges from Node,
-        Express, MongoDB, Prisma and more.
+        With React, Next.js, TailwindCSS and more. The backend ranges from Node, Express, MongoDB, Prisma and more.
       </p>
     </div>
   );
@@ -133,10 +148,12 @@ export const ProductCard = ({
         y: -20,
       }}
       key={product.title}
-      className="group/product h-[360px] w-[640px] relative flex-shrink-0">
+      className="group/product h-[360px] w-[640px] relative flex-shrink-0"
+    >
       <Link
         href={product.link}
-        className="block group-hover/product:shadow-2xl ">
+        className="block group-hover/product:shadow-2xl"
+      >
         <Image
           src={product.thumbnail}
           height="1920"
